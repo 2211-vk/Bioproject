@@ -1,0 +1,111 @@
+#NEXUS
+begin taxa;
+	dimensions ntax=19;
+	taxlabels
+	KZN4207_m
+	KZN1435_m
+	KZN605_m
+	CTRI-2
+	F11
+	H37Rv
+	H37Ra
+	RGTB327
+	RGTB423
+	Erdman
+	CDC1551
+	CCDC5180
+	CCDC5079
+	canettii
+	africanum
+	BCG_Moreau
+	BCG_Tokyo
+	BCG_Pasteur
+	BCG_Mexico
+;
+end;
+
+begin trees;
+	tree tree_1 = [&R] ((((((((((((KZN4207_m[&!rotate=false]:8.12829E-5,(KZN1435_m[&!rotate=false]:0.0016985341,KZN605_m[&!rotate=false]:5.285507E-4)[&bootstrap=100,!rotate=false]:4.623481E-4)[&bootstrap=100,!rotate=false]:0.0042100997,CTRI-2[&!rotate=true]:0.0033977954)[&bootstrap=79,!rotate=true]:0.0021438739,F11[&!rotate=false]:0.0168441655)[&bootstrap=38,!rotate=false]:0.0015755226,((H37Rv[&!rotate=true]:0.0022440312,H37Ra[&!rotate=true]:0.0201208419)[&bootstrap=98,!rotate=true]:0.0060129818,(RGTB327[&!rotate=false]:0.137871198,RGTB423[&!rotate=false]:0.1749425071)[&bootstrap=98,!rotate=false]:0.0308529302)[&bootstrap=100,!rotate=false]:0.0100783063)[&bootstrap=100,!rotate=false]:0.0091660416,Erdman[&!rotate=true]:0.0238256043)[&bootstrap=50,!rotate=true]:0.0025833737,CDC1551[&!rotate=true]:0.0241825967)[&bootstrap=40,!rotate=true]:0.002895866,(CCDC5180[&!rotate=true]:0.0143846292,CCDC5079[&!rotate=true]:0.0412297797)[&bootstrap=100,!rotate=true]:0.0181700122)[&bootstrap=98,!rotate=false]:0.0083286795,canettii:0.1733579109)[&bootstrap=100]:0.0163142772,africanum:0.0398048086)[&bootstrap=100]:0.0256268913,BCG_Moreau:0.002243098)[&bootstrap=91]:0.0011095348,BCG_Tokyo:0.003362559)[&bootstrap=100,!rotate=false]:0.0015270194,BCG_Pasteur:6.599813E-4,BCG_Mexico:1.102685E-4);
+end;
+
+begin figtree;
+	set appearance.backgroundColorAttribute="Default";
+	set appearance.backgroundColour=#-1;
+	set appearance.branchColorAttribute="User selection";
+	set appearance.branchLineWidth=1.0;
+	set appearance.branchMinLineWidth=0.0;
+	set appearance.branchWidthAttribute="Fixed";
+	set appearance.foregroundColour=#-16777216;
+	set appearance.selectionColour=#-2144520576;
+	set branchLabels.colorAttribute="User selection";
+	set branchLabels.displayAttribute="Branch times";
+	set branchLabels.fontName="sansserif";
+	set branchLabels.fontSize=8;
+	set branchLabels.fontStyle=0;
+	set branchLabels.isShown=false;
+	set branchLabels.significantDigits=4;
+	set layout.expansion=0;
+	set layout.layoutType="RECTILINEAR";
+	set layout.zoom=0;
+	set legend.attribute="bootstrap";
+	set legend.fontSize=10.0;
+	set legend.isShown=false;
+	set legend.significantDigits=4;
+	set nodeBars.barWidth=4.0;
+	set nodeBars.displayAttribute=null;
+	set nodeBars.isShown=false;
+	set nodeLabels.colorAttribute="User selection";
+	set nodeLabels.displayAttribute="bootstrap";
+	set nodeLabels.fontName="Helvetica";
+	set nodeLabels.fontSize=12;
+	set nodeLabels.fontStyle=1;
+	set nodeLabels.isShown=false;
+	set nodeLabels.significantDigits=4;
+	set nodeShape.colourAttribute="User selection";
+	set nodeShape.isShown=false;
+	set nodeShape.minSize=10.0;
+	set nodeShape.scaleType=Width;
+	set nodeShape.shapeType=Circle;
+	set nodeShape.size=4.0;
+	set nodeShape.sizeAttribute="Fixed";
+	set polarLayout.alignTipLabels=false;
+	set polarLayout.angularRange=0;
+	set polarLayout.rootAngle=0;
+	set polarLayout.rootLength=100;
+	set polarLayout.showRoot=true;
+	set radialLayout.spread=0.0;
+	set rectilinearLayout.alignTipLabels=false;
+	set rectilinearLayout.curvature=0;
+	set rectilinearLayout.rootLength=100;
+	set scale.offsetAge=0.0;
+	set scale.rootAge=1.0;
+	set scale.scaleFactor=1.0;
+	set scale.scaleRoot=false;
+	set scaleAxis.automaticScale=true;
+	set scaleAxis.fontSize=8.0;
+	set scaleAxis.isShown=false;
+	set scaleAxis.lineWidth=1.0;
+	set scaleAxis.majorTicks=1.0;
+	set scaleAxis.origin=0.0;
+	set scaleAxis.reverseAxis=false;
+	set scaleAxis.showGrid=true;
+	set scaleBar.automaticScale=true;
+	set scaleBar.fontSize=10.0;
+	set scaleBar.isShown=false;
+	set scaleBar.lineWidth=1.0;
+	set scaleBar.scaleRange=0.03;
+	set tipLabels.colorAttribute="User selection";
+	set tipLabels.displayAttribute="Names";
+	set tipLabels.fontName="Helvetica";
+	set tipLabels.fontSize=20;
+	set tipLabels.fontStyle=1;
+	set tipLabels.isShown=true;
+	set tipLabels.significantDigits=4;
+	set trees.order=false;
+	set trees.orderType="increasing";
+	set trees.rooting=false;
+	set trees.rootingType="User Selection";
+	set trees.transform=false;
+	set trees.transformType="cladogram";
+end;
+
