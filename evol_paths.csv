@@ -1,20 +1,20 @@
 path_id,nodes,probability
-1,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""KZN4207 m""]",0.7934140214222877
-2,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""KZN1435 m""]",0.42607143848531626
-3,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""KZN605 m""]",0.34794587219339823
-4,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CTRI-2""]",0.15870222487030616
-5,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""F11""]",0.30526160301068883
-6,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""H37Rv""]",0.3907350699401725
-7,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""H37Ra""]",0.524677591297157
-8,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""RGTB327""]",0.5832228519392901
-9,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""RGTB423""]",0.12424950427069348
-10,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""Erdman""]",0.4067687252893568
-11,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CDC1551""]",0.24831444446624096
-12,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CCDC5180""]",0.3135028302143792
-13,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CCDC5079""]",0.37066163272935615
-14,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""canettii""]",0.1522621705397873
-15,"[""internal"", ""internal"", ""internal"", ""internal"", ""africanum""]",0.9666175697680759
-16,"[""internal"", ""internal"", ""internal"", ""BCG Moreau""]",0.9352459302896583
-17,"[""internal"", ""internal"", ""BCG Tokyo""]",0.8696978828738481
-18,"[""internal"", ""BCG Pasteur""]",0.1470359346516541
-19,"[""internal"", ""BCG Mexico""]",0.9568901233819546
+1,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""KZN4207 m""]",0.3745401188473625
+2,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""KZN1435 m""]",0.9507143064099162
+3,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""KZN605 m""]",0.7319939418114051
+4,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CTRI-2""]",0.5986584841970366
+5,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""F11""]",0.15601864044243652
+6,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""H37Rv""]",0.15599452033620265
+7,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""H37Ra""]",0.05808361216819946
+8,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""RGTB327""]",0.8661761457749352
+9,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""RGTB423""]",0.6011150117432088
+10,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""Erdman""]",0.7080725777960455
+11,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CDC1551""]",0.020584494295802447
+12,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CCDC5180""]",0.9699098521619943
+13,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""CCDC5079""]",0.8324426408004217
+14,"[""internal"", ""internal"", ""internal"", ""internal"", ""internal"", ""canettii""]",0.21233911067827616
+15,"[""internal"", ""internal"", ""internal"", ""internal"", ""africanum""]",0.18182496720710062
+16,"[""internal"", ""internal"", ""internal"", ""BCG Moreau""]",0.18340450985343382
+17,"[""internal"", ""internal"", ""BCG Tokyo""]",0.3042422429595377
+18,"[""internal"", ""BCG Pasteur""]",0.5247564316322378
+19,"[""internal"", ""BCG Mexico""]",0.43194501864211576
