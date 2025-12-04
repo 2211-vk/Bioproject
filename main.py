@@ -152,14 +152,14 @@ def generate_report(pdf_path: str = 'genetic_al_report.pdf'):
 
 if __name__ == '__main__':
 	# High-level orchestrator
-	try:
-		fetch_reference()
-		prepare_gene_mapping()
-		visualize_tree()
-		quantum_simulation_placeholder()
-		hof, logbook = run_prediction()
-		report = generate_report()
-		logging.info('Pipeline complete. Report: %s', report)
-	except Exception as e:
-		logging.error('Pipeline failed: %s', e)
+	# try:
+	fetch_reference()
+	prepare_gene_mapping()
+	visualize_tree()
+	quantum_simulation_placeholder()
+	hof, logbook = run_prediction()
+	report = generate_report()
+	logging.info('Pipeline complete. Report: %s', report)
+	# except Exception as e:
+		# logging.error('Pipeline failed: %s', e)
 

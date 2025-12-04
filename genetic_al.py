@@ -43,7 +43,7 @@ CONFIG = {
     'metadata_file': 'gen_metadata.csv',
     'evol_paths_file': 'evol_paths.csv',
     'population_size': 100,
-    'num_generations': 10,
+    'num_generations': 100,
     'crossover_prob': 0.7,
     'mutation_prob': 0.2,
     'tournament_size': 3,
@@ -155,9 +155,6 @@ class GeneReferenceLoader:
         Returns:
         - detected_mutations: {gene_id: [mutation_str, ...]}
         """
-        import re
-        from pathlib import Path
-        
         detected = {}
         sample_fasta = Path(sample_dir) / f"{genome_id}.fasta"
         
@@ -315,6 +312,9 @@ def create_individual():
         (0.0, 1.0),      # transmission_rate
         (0.0, 1.0),      # biofilm_formation
         (0.0, 2.0),      # stress_response
+        (0.1, 2.0),       # threshold
+        (0.0, 1.0),      # mutation_weight
+        (0.0, 1.0)       # phylo_weight
     ]
     ind = [random.uniform(low, high) for low, high in bounds]
     return creator.Individual(ind)
@@ -326,7 +326,8 @@ class GeneLevelPredictor:
     param_names = [
         "mutation_rate", "hgt_probability", "antibiotic_pressure", "efflux_pump",
         "fitness_cost", "recombination", "mobile_elements", "epistasis",
-        "bottleneck", "transmission", "biofilm", "stress_response"
+        "bottleneck", "transmission", "biofilm", "stress_response", 
+        "threshold", "mutation_weight", "phylo_weight"
     ]
     
     def __init__(self, gene_loader: GeneReferenceLoader, data_loader: DataLoader):
@@ -334,6 +335,14 @@ class GeneLevelPredictor:
         self.data_loader = data_loader
         # Preload detected mutations for all samples
         self.detected_mutations_cache = {}
+
+    # def lookup_confidence(self, mutation_str: str) -> float:
+    #     """Lookup confidence score for a mutation string"""
+    #     for codon_pos, mut_infos in self.gene_loader.mutation_loci.items():
+    #         for mut_info in mut_infos:
+    #             if mut_info['mutation'] == mutation_str:
+    #                 return mut_info['confidence']
+        # return 0.0
     
     def evaluate(self, individual):
         """
@@ -360,21 +369,53 @@ class GeneLevelPredictor:
             
             detected_muts = self.detected_mutations_cache[genome_id]
             
+            if not hasattr(self, 'mutation_confidence_map'):
+                self.mutation_confidence_map = {}
+                for codon_pos, mut_infos in self.gene_loader.mutation_loci.items():
+                    for mut_info in mut_infos:
+                        key = (mut_info['gene_id'], mut_info['mutation'])
+                        self.mutation_confidence_map[key] = mut_info['confidence']
+            
             # Predict resistance based on detected mutations
             num_mutations = sum(len(muts) for muts in detected_muts.values())
             
-            # Confidence-weighted mutation count
-            total_confidence = 0
+            # Calculate mutation score
+            m_score = 0.0
             for gene_id, mutations in detected_muts.items():
                 for mut_str in mutations:
-                    # Find confidence score for this mutation
-                    for codon_pos, mut_infos in self.gene_loader.mutation_loci.items():
-                        for mut_info in mut_infos:
-                            if mut_info['gene_id'] == gene_id and mut_info['mutation'] == mut_str:
-                                total_confidence += mut_info['confidence']
+                    # # Find confidence score for this mutation
+                    # # for codon_pos, mut_infos in self.gene_loader.mutation_loci.items():
+                    # #     for mut_info in mut_infos:
+                    # #         if mut_info['gene_id'] == gene_id and mut_info['mutation'] == mut_str:
+                    # #             total_confidence += mut_info['confidence']
+                    # key = (gene_id, mut_str)
+                    # if key in self.mutation_confidence_map:
+                    #     total_confidence += self.mutation_confidence_map[key]
+                    base_confidence = self.mutation_confidence_map[(gene_id, mut_str)]
+                    # Apply GA parameters to modulate confidence
+                    weight = (
+                        1.0 +
+                        params['antibiotic_pressure'] * 0.3 +
+                        params['efflux_pump'] * 0.2 -
+                        params['fitness_cost'] * 0.5
+                    )
+
+                    m_score += base_confidence * weight
             
+            # Calculate phylogenetic distance score
+            leaf = self.data_loader.leaf_dict.get(genome_id)
+            if leaf:
+                p_score = self._calculate_evolutionary_distance(leaf, params)
+            else:
+                p_score = 0.0
+
+            # Combine scores
+            alpha = params.get('mutation_weight', 0.7)
+            beta = params.get('phylo_weight', 0.3)
+            total_confidence = m_score*alpha + p_score*beta
+
             # Predict resistant if sufficient evidence
-            mutation_threshold = 0.5  # At least one confident mutation
+            mutation_threshold = params.get('threshold', 0.5)  # At least one confident mutation
             predicted_resistance = 1 if total_confidence > mutation_threshold else 0
             
             if predicted_resistance == true_label:
@@ -509,16 +550,17 @@ def run_genetic_al_gene_level():
     toolbox.register("select", tools.selTournament, tournsize=CONFIG['tournament_size'])
     toolbox.register("evaluate", predictor.evaluate)
     
-    min_vals = [0.001, 0.0, 0.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    max_vals = [0.05, 0.3, 3.0, 2.0, 0.5, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0]
+    min_vals = [0.001, 0.0, 0.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0]
+    max_vals = [0.05, 0.3, 3.0, 2.0, 0.5, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0]
     
     def check_bounds(min_v, max_v):
         def decorator(func):
             def wrapper(*args, **kwargs):
                 offspring = func(*args, **kwargs)
                 for child in offspring:
-                    for i in range(len(child)):
-                        child[i] = np.clip(child[i], min_v[i], max_v[i])
+                    # for i in range(len(child)):
+                    #     child[i] = np.clip(child[i], min_v[i], max_v[i])
+                    child[:] = np.clip(child, min_v, max_v)
                 return offspring
             return wrapper
         return decorator

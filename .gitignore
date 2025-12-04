@@ -12,4 +12,5 @@ genetic_al_best_gene_params.json
 genetic_al_gene_evolution_stats.csv
 genetic_al_gene_predictions.csv
 genetic_al_report.pdf
+genetic_al3.py
 
