@@ -45,7 +45,6 @@ def fetch_reference(email: str = 'akamipersona1111@gmail.com'):
 def prepare_gene_mapping():
 	"""Run gene mapping preparation using consolidated biodata module."""
 	logging.info("Preparing gene mapping (biodata.setup_database)...")
-	# biodata.setup_database() handles all: fetch genome, create mapping, visualize tree
 	biodata.setup_database()
 	if not Path(CONFIG['gene_mapping_file']).exists():
 		raise FileNotFoundError(f"Expected gene mapping not found: {CONFIG['gene_mapping_file']}")
@@ -69,21 +68,31 @@ def quantum_simulation_placeholder():
 def run_prediction():
 	"""Run GA-based prediction by invoking genetic_al.run_genetic_al_gene_level()."""
 	logging.info("Starting gene-level GA prediction (genetic_al)...")
-	hof, logbook = genetic_al.run_genetic_al_gene_level()
+	hof, logbook, df_dn_ds = genetic_al.run_genetic_al_gene_level()
 	logging.info("GA finished")
-	return hof, logbook
+	return hof, logbook, df_dn_ds
 
 
 def generate_report(pdf_path: str = 'genetic_al_report.pdf'):
 	"""Create a multi-page PDF report with tree image, top genes bar chart, and GA fitness progression."""
 	logging.info("Generating report PDF...")
+	dn_ds_file = Path('dn_ds_analysis.csv')
 	preds_file = Path('genetic_al_gene_predictions.csv')
 	stats_file = Path('genetic_al_gene_evolution_stats.csv')
 	params_file = Path('genetic_al_best_gene_params.json')
 	# Create body pages into a temporary PDF, then merge tree PDF (if present) at front
 	body_pdf = Path('report_body.pdf')
 	with PdfPages(str(body_pdf)) as pdf:
-		# Page 1 (body): Top genes bar chart
+		#Page 1 (body): DN/DS analysis
+		if dn_ds_file.exists():
+			df_dn_ds = pd.read_csv(dn_ds_file)
+			fig, ax = plt.subplots(figsize=(11, 8))
+			ax.axis('off')
+			txt = df_dn_ds.to_string(index=False)
+			ax.text(0.01, 0.99, 'dN/dS Analysis Results\n\n'+txt, va='top', ha='left', fontsize=10, family='monospace')
+			pdf.savefig(fig)
+			plt.close(fig)
+		# Page 2 (body): Top genes bar chart
 		if preds_file.exists():
 			df = pd.read_csv(preds_file)
 			if not df.empty:
@@ -97,7 +106,7 @@ def generate_report(pdf_path: str = 'genetic_al_report.pdf'):
 				pdf.savefig(fig)
 				plt.close(fig)
 
-		# Page 2 (body): GA fitness progression
+		# Page 3 (body): GA fitness progression
 		if stats_file.exists():
 			try:
 				df_stats = pd.read_csv(stats_file)
@@ -116,7 +125,7 @@ def generate_report(pdf_path: str = 'genetic_al_report.pdf'):
 			except Exception as e:
 				logging.warning(f"Could not plot GA stats: {e}")
 
-		# Page 3 (body): Best parameters summary
+		# Page 4 (body): Best parameters summary
 		if params_file.exists():
 			with open(params_file, 'r') as f:
 				params = json.load(f)
@@ -152,14 +161,14 @@ def generate_report(pdf_path: str = 'genetic_al_report.pdf'):
 
 if __name__ == '__main__':
 	# High-level orchestrator
-	# try:
-	fetch_reference()
-	prepare_gene_mapping()
-	visualize_tree()
-	quantum_simulation_placeholder()
-	hof, logbook = run_prediction()
-	report = generate_report()
-	logging.info('Pipeline complete. Report: %s', report)
-	# except Exception as e:
-		# logging.error('Pipeline failed: %s', e)
+	try:
+		fetch_reference()
+		prepare_gene_mapping()
+		visualize_tree()
+		quantum_simulation_placeholder()
+		hof, logbook, df_dn_ds = run_prediction()
+		report = generate_report()
+		logging.info('Pipeline complete. Report: %s', report)
+	except Exception as e:
+		logging.error('Pipeline failed: %s', e)
 

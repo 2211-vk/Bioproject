@@ -23,6 +23,7 @@ import logging
 import re
 from pathlib import Path
 from ete3 import Tree, TreeStyle, NodeStyle, TextFace
+import sys
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
@@ -190,14 +191,14 @@ def fetch_genome_from_ncbi(email=None, genome_id=None):
     """
     
     if email is None:
-        user_email = input("\nNhap email NCBI (hoac Enter cho mac dinh): ").strip()
+        user_email = input("\nPlease provide your NCBI email (or Enter for default): ").strip()
         email = user_email if user_email else "akamipersona1111@gmail.com"
     
     if genome_id is None:
-        user_id = input("Nhap Genome ID NCBI (hoac Enter cho NC_000962.3 - H37Rv): ").strip()
+        user_id = input("Enter NCBI Genome ID (or Enter for NC_000962.3 - H37Rv): ").strip()
         genome_id = user_id if user_id else "NC_000962.3"
     
-    logging.info(f"Dang tai genome {genome_id} tu NCBI...")
+    logging.info(f"Loading genome {genome_id} from NCBI...")
     Entrez.email = email
     
     try:
@@ -206,20 +207,20 @@ def fetch_genome_from_ncbi(email=None, genome_id=None):
         full_seq = str(record.seq)
         seq_1000bp = Seq(full_seq[:1000])
         
-        logging.info(f"OK - Tai thanh cong!")
+        logging.info(f"LOADING SUCCESS!")
         logging.info(f"  - ID: {record.id}")
-        logging.info(f"  - Do dai: {len(full_seq)} bp")
+        logging.info(f"  - Lenght: {len(full_seq)} bp")
         
         return record, full_seq, seq_1000bp
     except Exception as e:
-        logging.error(f"Loi tai: {e}")
+        logging.error(f"ERROR: {e}")
         raise
 
 # =================== GENE MAPPING PREPARATION ===================
 def create_gene_mapping_from_manual_data():
     """Create gene mapping from H37Rv (NC_000962.3) annotation"""
     
-    logging.info("Tao gene mapping tu H37Rv annotation...")
+    logging.info("create gene mapping from H37Rv annotation...")
     
     gene_coordinates = {
         'gyrA': {'start': 7380, 'end': 9818, 'strand': '+'},
@@ -259,7 +260,7 @@ def create_gene_mapping_from_manual_data():
             })
     
     df_mapping = pd.DataFrame(gene_mapping)
-    logging.info(f"OK - Tao: {len(df_mapping)} mutations, {len(df_mapping['gene_id'].unique())} genes")
+    logging.info(f"Create: {len(df_mapping)} mutations, {len(df_mapping['gene_id'].unique())} genes")
     
     return df_mapping
 
@@ -298,26 +299,26 @@ def save_gene_mapping_json(df_mapping, output_file='gene_mapping_tb.json'):
     with open(output_file, 'w') as f:
         json.dump(output, f, indent=2)
     
-    logging.info(f"OK - Luu {output_file}")
+    logging.info(f"Save {output_file}")
     return output
 
 def save_gene_mapping_csv(df_mapping, output_file='gene_mapping_tb.csv'):
     """Save gene mapping as CSV"""
     df_mapping.to_csv(output_file, index=False)
-    logging.info(f"OK - Luu {output_file}")
+    logging.info(f"Save {output_file}")
 
 # =================== GENOMIC DATA PREPARATION ===================
 def prepare_genome_data(record, full_seq, seq_1000bp):
     """Prepare genomic features and save FASTA"""
     global genomic_features
     
-    logging.info("Chuan bi du lieu genetic...")
+    logging.info("Preparing genetic data...")
     
     # Save full FASTA
     output_fasta = 'h37rv_ref.fasta'
     with open(output_fasta, 'w') as f:
         f.write(f">{record.id}\n{full_seq}\n")
-    logging.info(f"OK - Luu {output_fasta}")
+    logging.info(f"Save {output_fasta}")
     
     # One-hot encode first 1000bp
     def one_hot_encode(seq):
@@ -327,7 +328,7 @@ def prepare_genome_data(record, full_seq, seq_1000bp):
     features = one_hot_encode(seq_1000bp)
     genomic_features = features
     np.save('genomic_features.npy', features)
-    logging.info(f"OK - Luu genomic_features.npy (shape: {features.shape})")
+    logging.info(f"Save genomic_features.npy (shape: {features.shape})")
     
     # GC content
     gc_content = (seq_1000bp.count('G') + seq_1000bp.count('C')) / len(seq_1000bp)
@@ -341,11 +342,11 @@ def prepare_genome_data(record, full_seq, seq_1000bp):
     })
     
     df_gen.to_csv('gen_metadata.csv', index=False)
-    logging.info(f"OK - Luu gen_metadata.csv")
+    logging.info(f"Save gen_metadata.csv")
 
 def prepare_evolutionary_paths(phylo_tree):
     """Prepare evolutionary paths from phylogenetic tree"""
-    logging.info("Chuan bi evolutionary paths...")
+    logging.info("Preparing evolutionary paths...")
     global tree
     
     tree = dendropy.Tree.get(path=phylo_tree, schema=phylo_tree.split('.')[-1])
@@ -362,14 +363,12 @@ def prepare_evolutionary_paths(phylo_tree):
     })
     
     df_paths.to_csv('evol_paths.csv', index=False)
-    logging.info(f"OK - Luu evol_paths.csv ({len(paths)} paths)")
+    logging.info(f"Save evol_paths.csv ({len(paths)} paths)")
 
 # =================== TREE VISUALIZATION ===================
 def visualize(file: str = "MTBC_SNP_align_200.phy_phyml_tree.nexus"):
     """Visualize phylogenetic tree with resistance coloring and branch lengths"""
     global builded_tree
-    
-    logging.info("\nVe tree phuong tien hoc...")
     
     def build_tree(fname: str):
         """Build tree from file"""
@@ -389,7 +388,7 @@ def visualize(file: str = "MTBC_SNP_align_200.phy_phyml_tree.nexus"):
         return builded_tree
     
     if builded_tree is None:
-        logging.info(f"Xay dung tree tu {file}...")
+        logging.info(f"Build tree from {file}...")
         tree_bio = build_tree(file)
         builded_tree = build_tree_for_ete3(tree_bio.root)
     
@@ -402,7 +401,7 @@ def visualize(file: str = "MTBC_SNP_align_200.phy_phyml_tree.nexus"):
     ts.branch_vertical_margin = 50
     ts.scale = 800
     
-    # Customize nodes - use only orange color for all leaves
+    # Customize node styles
     leaf_color = "#ff6600"
     line_color = "#ff6600"
     for node in builded_tree.traverse():
@@ -459,7 +458,7 @@ def visualize(file: str = "MTBC_SNP_align_200.phy_phyml_tree.nexus"):
     # Export PDF
     output_pdf = "phylogenetic_tree.pdf"
     builded_tree.render(output_pdf, w=2000, h=2000, tree_style=ts, dpi=300)
-    logging.info(f"OK - Luu tree: {output_pdf}")
+    logging.info(f"Save tree: {output_pdf}")
 
 # =================== PER-SAMPLE SEQUENCE GENERATION & MUTATION DETECTION ===================
 def generate_sample_sequences_with_mutations(full_seq: str, phylo_tree: str, df_mapping: pd.DataFrame, output_dir: str = "sample_sequences", mutation_data: str = 'mutations.csv'):
@@ -473,29 +472,11 @@ def generate_sample_sequences_with_mutations(full_seq: str, phylo_tree: str, df_
     4. Return updated metadata with true resistance labels.
     """
     
-    logging.info("\nTao sequences cho tung mau voi dot bien kháng thuoc...")
+    logging.info("\nCreate sequences for each sample with mutations...")
     
     # Create output directory
     Path(output_dir).mkdir(exist_ok=True)
 
-    # Parse phylogenetic tree to get sample names and evolutionary distances
-    # try:
-    #     tree = Phylo.read(phylo_tree, "nexus")
-    # except Exception as e:
-    #     logging.warning(f"Could not read tree: {e}, using hardcoded samples")
-    #     tree = None
-    
-    # Extract leaf names (sample IDs)
-    # if tree:
-    #     sample_names = [term.name for term in tree.get_terminals()]
-    # else:
-    #     # Fallback to tree tip names from NEXUS if Phylo fails
-    #     sample_names = ["KZN4207_m", "KZN1435_m", "KZN605_m", "CTRI-2", "F11", 
-    #                    "H37Rv", "H37Ra", "RGTB327", "RGTB423", "Erdman", "CDC1551",
-    #                    "CCDC5180", "CCDC5079", "canettii", "africanum",
-    #                    "BCG_Moreau", "BCG_Tokyo", "BCG_Pasteur", "BCG_Mexico"]
-    
-    # Load mutation and genes labels
     mutation_df = pd.read_csv(mutation_data)
     R_mutations = mutation_df[mutation_df['confidence'].str.contains('Assoc w R', na=False)]['Mutation'].str.upper().tolist()
     KNOWN_RESISTANCE_GENES = [
@@ -508,15 +489,10 @@ def generate_sample_sequences_with_mutations(full_seq: str, phylo_tree: str, df_
     max_distance = 0.0
     
     for leaf in tree.leaf_node_iter():
-        # Lấy tên sample (bỏ quotes nếu có)
         leaf_name = leaf.taxon.label.strip("'\"")
-        
-        # Tính khoảng cách từ root đến lá này
         distance = leaf.distance_from_root()
-        
         LEAF_DISTANCES[leaf_name] = distance
-        
-        # Cập nhật max distance
+    
         if distance > max_distance:
             max_distance = distance
             
@@ -583,8 +559,7 @@ def generate_sample_sequences_with_mutations(full_seq: str, phylo_tree: str, df_
         if r_mutations:
             resistance_label = "resistant"
         else:
-            # Không có đột biến WHO → dùng phylogenetic signal
-            resistance_prob = evo_factor * 0.85  # chủng xa → dễ kháng hơn
+            resistance_prob = evo_factor * 0.85
             resistance_label = "resistant" if np.random.rand() < resistance_prob else "susceptible"
         # Save sample FASTA
         sample_fasta = Path(output_dir) / f"{sample_id}.fasta"
@@ -608,7 +583,7 @@ def generate_sample_sequences_with_mutations(full_seq: str, phylo_tree: str, df_
     df_meta = pd.DataFrame(sample_metadata)
     df_meta.to_csv('gen_metadata.csv', index=False)
     
-    logging.info(f"OK - Tao {len(sample_names)} samples: {sum(df_meta['resistance_label']=='resistant')} resistant, {sum(df_meta['resistance_label']=='susceptible')} susceptible")
+    logging.info(f"Create {len(sample_names)} samples: {sum(df_meta['resistance_label']=='resistant')} resistant, {sum(df_meta['resistance_label']=='susceptible')} susceptible")
     
     return df_meta
 
@@ -667,7 +642,7 @@ def setup_database(email: str = None, genome_id: str = None, phylo_tree: str = N
     """
     
     print("\n" + "="*80)
-    print("TUAN BL - CHUAN BI DU LIEU SINH HOC")
+    print("PREPARING BIOLOGICAL DATA FOR TB RESISTANCE PREDICTION")
     print("="*80)
     
     # If no phylo_tree provided, use default
@@ -694,7 +669,7 @@ def setup_database(email: str = None, genome_id: str = None, phylo_tree: str = N
     df_metadata = generate_sample_sequences_with_mutations(full_seq, phylo_tree, df_mapping)
     
     print("\n" + "="*80)
-    print("OK - CHUAN BI DU LIEU XONG")
+    print("BIOLOGICAL DATA PREPARATION COMPLETED!")
     print("="*80)
     print("\nFiles tao:")
     print("  + h37rv_ref.fasta")
